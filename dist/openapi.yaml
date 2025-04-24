@@ -1,0 +1,53 @@
+openapi: 3.0.0
+info:
+  title: SoBold AI Central System API
+  version: 1.0.0
+  description: API documentation for SoBoldAI plugin endpoints only.
+
+paths:
+  /wp-json/SoBoldAI/v1/auth/signup:
+    post:
+      summary: Register a new user
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Signup successful
+
+  /wp-json/SoBoldAI/v1/summary:
+    post:
+      summary: Summarize text
+      tags: [Summarization]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                model:
+                  type: string
+      responses:
+        '200':
+          description: Summarized result
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
