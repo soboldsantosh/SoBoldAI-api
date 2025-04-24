@@ -1,4 +1,4 @@
-<!-- HTML for static distribution bundle build -->
+<!-- HTML for static distribution bundle build
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -17,12 +17,38 @@
     <script src="./swagger-initializer.js" charset="UTF-8"> </script>
   </body>
 </html>
-<script>
-    SwaggerUIBundle({
-      url: "openapi.yaml",
-      dom_id: '#swagger-ui',
-      deepLinking: true,
-      presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
-      layout: "StandaloneLayout"
-    });
+ -->
+
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SoBold AI API Docs</title>
+  <link rel="stylesheet" href="swagger-ui.css" />
+  <style>
+    .topbar .download-url-wrapper {
+      display: none; /* hides the explore bar */
+    }
+  </style>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="swagger-ui-bundle.js"></script>
+  <script src="swagger-ui-standalone-preset.js"></script>
+  <script>
+    window.onload = function() {
+      SwaggerUIBundle({
+        url: "openapi.yaml",           // ✅ local OpenAPI spec
+        dom_id: "#swagger-ui",
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: "StandaloneLayout"
+      });
+    };
   </script>
+</body>
+</html>
