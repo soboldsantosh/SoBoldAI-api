@@ -2,13 +2,15 @@ openapi: 3.0.0
 info:
   title: SoBold AI Central System API
   version: 1.0.0
-  description: API documentation for SoBoldAI plugin endpoints only.
-
+  description: OpenAPI specification for all SoBold AI plugin endpoints.
+servers:
+- url: https://SoBoldAI.com
 paths:
   /wp-json/SoBoldAI/v1/auth/signup:
     post:
       summary: Register a new user
-      tags: [Authentication]
+      tags:
+      - Authentication
       requestBody:
         required: true
         content:
@@ -16,20 +18,137 @@ paths:
             schema:
               type: object
               properties:
-                email:
+                user_email:
                   type: string
-                password:
+              required:
+              - user_email
+      responses:
+        '201':
+          description: User registered and refresh token issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      user_id:
+                        type: integer
+                      refresh_token:
+                        type: string
+        '400':
+          description: Invalid email
+        '409':
+          description: Email already exists
+  /wp-json/SoBoldAI/v1/apikey/generate:
+    post:
+      summary: Generate API key
+      tags:
+      - API Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+              required:
+              - user_id
+      responses:
+        '201':
+          description: API key generated
+        '400':
+          description: Invalid user ID
+        '404':
+          description: User not found
+      security:
+      - bearerAuth: []
+  /wp-json/SoBoldAI/v1/apikey/revoke:
+    post:
+      summary: Revoke API key
+      tags:
+      - API Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                api_key:
                   type: string
+              required:
+              - user_id
+              - api_key
       responses:
         '200':
-          description: Signup successful
-
+          description: API key revoked
+        '400':
+          description: Invalid input
+        '403':
+          description: Unauthorized
+      security:
+      - bearerAuth: []
+  /wp-json/SoBoldAI/v1/apikey/activate:
+    post:
+      summary: Activate API key
+      tags:
+      - API Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                api_key:
+                  type: string
+              required:
+              - user_id
+              - api_key
+      responses:
+        '200':
+          description: API key activated
+        '400':
+          description: Invalid input
+        '403':
+          description: Unauthorized
+      security:
+      - bearerAuth: []
+  /wp-json/SoBoldAI/v1/auth/accesstoken/generate:
+    post:
+      summary: Generate access token from refresh token
+      tags:
+      - Authentication
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          description: Access token generated
+        '400':
+          description: Missing refresh token
+        '401':
+          description: Invalid or expired refresh token
+        '404':
+          description: User not found
   /wp-json/SoBoldAI/v1/summary:
     post:
-      summary: Summarize text
-      tags: [Summarization]
+      summary: Generate a summary using an AI model
+      tags:
+      - Summarization
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -41,10 +160,17 @@ paths:
                   type: string
                 model:
                   type: string
+              required:
+              - text
       responses:
         '200':
-          description: Summarized result
-
+          description: Summary returned
+        '400':
+          description: No input text
+        '401':
+          description: Invalid or expired token
+        '500':
+          description: Server error during summary generation
 components:
   securitySchemes:
     bearerAuth:
